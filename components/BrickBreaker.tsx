@@ -140,7 +140,7 @@ const BrickBreaker: React.FC = () => {
 
   // Trigger countdown and initialization when state changes to GAME
   useEffect(() => {
-    if (gameState === "GAME" && !gameRef.current.gameRunning && !result) {
+    if (gameState === "GAME" && !gameRef.current.gameRunning) {
       const startSequence = async () => {
         setResult(null);
         setIsPaused(false);
@@ -397,6 +397,7 @@ const BrickBreaker: React.FC = () => {
     if (gameRef.current.timerInterval) clearInterval(gameRef.current.timerInterval);
     bgmRef.current?.pause();
     if (bgmRef.current) bgmRef.current.currentTime = 0;
+    setResult(null);
     setGameState("MAIN");
   };
 
