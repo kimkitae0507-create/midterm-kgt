@@ -65,6 +65,11 @@ git push -u origin main
 
 깃허브 연동해줘
 
+https://docs.google.com/spreadsheets/d/1KpRiGcTbvPQwUwyCv186zPFYY0O-ZkTB1pQOnA8fhfI/edit?usp=sharing
+https://github.com/kimkitae0507-create/midterm-kgt.git
+midterm-kgt.vercel.app
+
+
 
 
 

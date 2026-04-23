@@ -384,13 +384,42 @@ const BrickBreaker: React.FC = () => {
       if (e.key === "Right" || e.key === "ArrowRight") gameRef.current.rightPressed = false;
       if (e.key === "Left" || e.key === "ArrowLeft") gameRef.current.leftPressed = false;
     };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!gameRef.current.gameRunning || gameRef.current.isPaused) return;
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      
+      if (e.cancelable) e.preventDefault();
+      
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const relativeX = (touch.clientX - rect.left) * scaleX;
+      
+      let nextX = relativeX - PADDLE_WIDTH / 2;
+      gameRef.current.paddleX = Math.max(0, Math.min(canvas.width - PADDLE_WIDTH, nextX));
+    };
+
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
+    
+    const canvas = canvasRef.current;
+    if (canvas) {
+        canvas.addEventListener("touchmove", handleTouchMove, { passive: false });
+        canvas.addEventListener("touchstart", (e) => {
+            if (e.cancelable) e.preventDefault();
+        }, { passive: false });
+    }
+
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
+      if (canvas) {
+          canvas.removeEventListener("touchmove", handleTouchMove);
+      }
     };
-  }, []);
+  }, [gameState, isPaused]);
 
   const handleBackToMain = () => {
     gameRef.current.gameRunning = false;
@@ -473,8 +502,23 @@ const BrickBreaker: React.FC = () => {
 
       {/* Styles are loaded via globals.css */}
       <style jsx global>{`
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            touch-action: none; /* Prevents browser handling of gestures */
+        }
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid var(--glass-border);
+            border-radius: 12px;
+            display: block;
+        }
         .overlay.countdown {
-            font-size: 8rem;
+            font-size: clamp(4rem, 15vw, 8rem);
             font-weight: 900;
             color: var(--secondary-color);
             background: transparent;
@@ -483,6 +527,7 @@ const BrickBreaker: React.FC = () => {
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            z-index: 25;
         }
         .overlay.result {
             position: absolute;
@@ -490,19 +535,22 @@ const BrickBreaker: React.FC = () => {
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.9);
             padding: 2rem;
             border-radius: 20px;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border);
             z-index: 30;
-            min-width: 300px;
+            width: 90%;
+            max-width: 400px;
         }
         .ranking-container {
             margin: 1.5rem 0;
             background: rgba(255, 255, 255, 0.1);
             padding: 1rem;
             border-radius: 10px;
+            max-height: 200px;
+            overflow-y: auto;
         }
         .ranking-list {
             list-style: none;
@@ -510,9 +558,10 @@ const BrickBreaker: React.FC = () => {
             text-align: left;
         }
         .ranking-list li {
-            padding: 8px 0;
+            padding: 10px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             font-size: 0.95rem;
+            color: #eee;
         }
       `}</style>
     </div>
