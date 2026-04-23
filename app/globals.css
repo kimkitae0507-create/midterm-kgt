@@ -295,7 +295,37 @@ canvas {
     #app {
         height: 100vh;
     }
-    .game-title { font-size: 2rem; }
-    .top-bar { padding: 0.5rem; flex-direction: column; gap: 0.5rem; }
-    .stats { font-size: 1rem; }
+    .game-title { font-size: 2.2rem; }
+    .mascot-container { width: 180px; height: 180px; }
+    
+    .top-bar { 
+        padding: 0.5rem 1rem; 
+        flex-direction: row; 
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        position: relative; /* Fixed overlap issues on small height screens */
+        background: rgba(0, 0, 0, 0.9);
+    }
+    
+    .stats { 
+        font-size: 1rem; 
+        width: 100%;
+        justify-content: center;
+        gap: 15px;
+        order: -1; /* Keep stats at the top if wrapped */
+    }
+
+    .controls {
+        gap: 5px;
+    }
+
+    .top-bar button {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+
+    .canvas-container {
+        margin: 10px auto 0;
+    }
 }
